@@ -1,11 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
+const personsData = require('./models/personData');
 const app = express();
 
 app.use(express.json());
 morgan.token('postData', (req, res) => {
 	return JSON.stringify(req.body);
 });
+
 app.use(
 	morgan(
 		`:method :url :status :res[content-length] - :response-time ms :postData`,
@@ -13,75 +16,38 @@ app.use(
 );
 app.use(express.static('dist'));
 
-let phoneNumbers = [
-	{
-		id: '1',
-		name: 'Arto Hellas',
-		number: '040-123456',
-	},
-	{
-		id: '2',
-		name: 'Ada Lovelace',
-		number: '39-44-5323523',
-	},
-	{
-		id: '3',
-		name: 'Dan Abramov',
-		number: '12-43-234345',
-	},
-	{
-		id: '4',
-		name: 'Mary Poppendieck',
-		number: '39-23-6423122',
-	},
-];
-
-const infoPage = `
-<div>
-	<p>Phonebook has info for ${phoneNumbers.length} people </p>
-	<p>${new Date()}</p></div>
-`;
-
-const GenerateRandomID = () => {
-	const IDkeys =
-		'abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ-#&%_';
-	const idLength = 10;
-	let ID = '';
-
-	for (let index = 0; index < idLength; index++) {
-		ID += IDkeys[Math.floor(Math.random() * IDkeys.length)];
-	}
-
-	if (phoneNumbers.find((number) => number.id === ID)) {
-		return GenerateRandomID();
-	} else return ID;
-};
-
 // get requests.
 app.get('/api/persons', (request, response) => {
-	response.json(phoneNumbers);
+	personsData.find({}).then((person) => response.json(person));
 });
 
-app.get('/api/persons/info', (request, response) => {
+app.get('/api/persons/info', async (request, response) => {
+	const count = await personsData.countDocuments({});
+
+	const infoPage = `
+    <div>
+      <p>Phonebook has info for ${count} people</p>
+      <p>${new Date()}</p>
+    </div>
+  `;
+
 	response.send(infoPage);
 });
 
 app.get('/api/persons/:id', (request, response) => {
-	const id = request.params.id;
-	const number = phoneNumbers.find((num) => num.id === id);
-
-	if (number) {
-		response.json(number);
-	} else response.status(404).end();
+	personsData.findById(request.params.id).then((res) => {
+		if (res) {
+			response.json(res);
+		} else response.status(404).end();
+	});
 });
 
 // delete request
 
 app.delete('/api/persons/:id', (request, response) => {
-	const id = request.params.id;
-	phoneNumbers = phoneNumbers.filter((number) => number.id !== id);
-
-	response.status(204).end();
+	personsData
+		.findByIdAndDelete(request.params.id)
+		.then(response.status(204).end());
 });
 
 // post request
@@ -97,24 +63,31 @@ app.post('/api/persons', (request, response) => {
 		return response.status(400).json({
 			error: 'number is missing',
 		});
-	} else if (phoneNumbers.find((number) => number.name === body.name)) {
+	} else if (personsData.collection.countDocuments({ name: body.name }) > 0) {
 		return response.status(400).json({
 			error: 'name must be unique',
 		});
 	}
 
-	const data = {
-		id: GenerateRandomID(),
+	const data = new personsData({
 		name: body.name,
 		number: body.number,
-	};
+	});
 
-	phoneNumbers = phoneNumbers.concat(data);
-	response.json(data);
+	data.save({}).then((res) => response.json(res));
 });
 
-const PORT = process.env.PORT || 3001;
+app.put('/api/persons/:id', (request, response) => {
+	personsData
+		.findByIdAndUpdate(request.params.id, request.body, {
+			new: true,
+			runValidators: true,
+			context: 'query',
+		})
+		.then((respond) => response.json(respond));
+});
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-	console.log('opening a port in', PORT);
+	console.log(`Server listening on port ${PORT}`);
 });

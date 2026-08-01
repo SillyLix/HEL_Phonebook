@@ -1,14 +1,14 @@
 ### get info
-GET http://localhost:3001/info
+GET http://localhost:3001/api/persons/info
 
 ### get all data
 GET http://localhost:3001/api/persons
 
 ### get one data from specific id
-GET  http://localhost:3001/api/persons/4
+GET  http://localhost:3001/api/persons/6a6e7085722f1b8531aa7d58
 
 ### get one data from specific id
-DELETE http://localhost:3001/api/persons/4
+DELETE http://localhost:3001/api/persons/6a6e708f722f1b8531aa7d59
 
 ### post data
 
