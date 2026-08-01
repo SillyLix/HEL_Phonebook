@@ -39,7 +39,7 @@ const App = () => {
 							),
 						)
 						// show error msg
-						.catch((error) => {
+						.catch(() => {
 							setNoteMessage({
 								message: `Information of ${person.name} has already been removed from server`,
 								isError: true,
