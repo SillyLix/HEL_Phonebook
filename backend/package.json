@@ -1,9 +1,9 @@
 {
-  "name": "backend",
-  "version": "0.0.0",
-  "description": "following Uni of helsinki's fs course part 3",
-  "license": "MIT",
-  "author": "Prajwal Dhakal",
+  "name": "phonebook-backend",
+  "version": "1.0.0",
+  "description": "server for phonebook app that stores phone numbers",
+  "license": "ISC",
+  "author": "prajwal dhakal",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "morgan": "^1.11.0"
   }
 }

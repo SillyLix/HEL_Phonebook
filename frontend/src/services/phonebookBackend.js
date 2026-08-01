@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // URl of the data
-const url = 'http://localhost:3001/persons';
+const url = '/api/persons';
 
 // this function allows one to receive all the data
 const getAll = () => axios.get(url).then((response) => response.data);
