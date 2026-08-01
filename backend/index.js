@@ -62,7 +62,7 @@ app.get('/api/persons', (request, response) => {
 	response.json(phoneNumbers);
 });
 
-app.get('api/persons/info', (request, response) => {
+app.get('/api/persons/info', (request, response) => {
 	response.send(infoPage);
 });
 

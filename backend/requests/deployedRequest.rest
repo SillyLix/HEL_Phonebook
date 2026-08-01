@@ -1,0 +1,21 @@
+### get info
+GET https://hel-phonebook.onrender.com/info
+
+### get all data
+GET https://hel-phonebook.onrender.com/api/persons
+
+### get one data from specific id
+GET  https://hel-phonebook.onrender.com/api/persons/1
+
+### get one data from specific id
+DELETE https://hel-phonebook.onrender.com/api/persons/Rp8kvDSY07
+
+### post data
+
+POST  https://hel-phonebook.onrender.com/api/persons
+Content-Type: application/json
+
+{
+    "name": "test",
+    "number": "34125"
+} 
