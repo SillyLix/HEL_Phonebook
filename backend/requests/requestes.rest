@@ -1,0 +1,15 @@
+GET http://localhost:3001/api/notes
+
+###
+GET http://localhost:3001/api/notes/2
+
+###
+
+POST http://localhost:3001/api/notes HTTP/1.1
+Content-Type: application/json
+
+{
+    "Content": "c# is good",
+    "Important": true
+    
+}
