@@ -52,19 +52,22 @@ const PersonForm = ({ persons, setPersons, setNoteMessage }) => {
 				};
 
 				filteredPersons.map((element) => {
-					console.log(element);
+					return phonebookBackend
+						.update(element.id, data)
+						.then((response) => {
+							setNoteMessage(
+								`Changed number to ${response.number} for ${response.name}`,
+							);
 
-					return phonebookBackend.update(element.id, data).then((response) => {
-						setNoteMessage(
-							`Changed number to ${response.number} for ${response.name}`,
-						);
-
-						return setPersons(
-							persons.map((person) =>
-								person.id === element.id ? response : person,
-							),
-						);
-					});
+							return setPersons(
+								persons.map((person) =>
+									person.id === element.id ? response : person,
+								),
+							);
+						})
+						.catch((error) => {
+							setNoteMessage(error.response.data.error, true, 5000);
+						});
 				});
 			}
 		}

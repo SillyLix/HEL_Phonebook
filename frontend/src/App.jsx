@@ -41,6 +41,8 @@ const App = () => {
 						// delete
 						.delatePhone(person.id)
 						.then(
+							setNote('deleted successfully'),
+
 							setPersons(() =>
 								persons.filter((filterPerson) => filterPerson !== person),
 							),
