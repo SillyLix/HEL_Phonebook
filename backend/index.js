@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const personsData = require('./models/personData');
+
 const app = express();
 
 app.use(express.json());
@@ -17,11 +18,16 @@ app.use(
 app.use(express.static('dist'));
 
 // get requests.
-app.get('/api/persons', (request, response) => {
-	personsData.find({}).then((person) => response.json(person));
+app.get('/api/persons', (request, response, next) => {
+	personsData
+		.find({})
+		.then((person) => {
+			response.json(person);
+		})
+		.catch((error) => next(error));
 });
 
-app.get('/api/persons/info', async (request, response) => {
+app.get('/info', async (request, response) => {
 	const count = await personsData.countDocuments({});
 
 	const infoPage = `
@@ -34,25 +40,29 @@ app.get('/api/persons/info', async (request, response) => {
 	response.send(infoPage);
 });
 
-app.get('/api/persons/:id', (request, response) => {
-	personsData.findById(request.params.id).then((res) => {
-		if (res) {
-			response.json(res);
-		} else response.status(404).end();
-	});
+app.get('/api/persons/:id', (request, response, next) => {
+	personsData
+		.findById(request.params.id)
+		.then((res) => {
+			if (res) {
+				response.json(res);
+			} else response.status(404).end();
+		})
+		.catch((error) => next(error));
 });
 
 // delete request
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
 	personsData
 		.findByIdAndDelete(request.params.id)
-		.then(response.status(204).end());
+		.then(response.status(204).end())
+		.catch((error) => next(error));
 });
 
 // post request
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
 	body = request.body;
 
 	if (!body.name) {
@@ -74,18 +84,35 @@ app.post('/api/persons', (request, response) => {
 		number: body.number,
 	});
 
-	data.save({}).then((res) => response.json(res));
+	data
+		.save({})
+		.then((res) => response.json(res))
+		.catch((error) => next(error));
 });
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
 	personsData
 		.findByIdAndUpdate(request.params.id, request.body, {
 			new: true,
 			runValidators: true,
 			context: 'query',
 		})
-		.then((respond) => response.json(respond));
+		.then((respond) => response.json(respond))
+		.catch((error) => next(error));
 });
+
+const errorHandler = (error, req, res, next) => {
+	console.log('error message:', error.message);
+
+	if (error.name === 'CastError') {
+		return res.status(400).send({ error: 'malformatted  id' });
+	}
+
+	next(error);
+};
+
+app.use(errorHandler);
+
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
