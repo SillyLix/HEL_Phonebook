@@ -93,7 +93,7 @@ app.post('/api/persons', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
 	personsData
 		.findByIdAndUpdate(request.params.id, request.body, {
-			new: true,
+			after: true,
 			runValidators: true,
 			context: 'query',
 		})
