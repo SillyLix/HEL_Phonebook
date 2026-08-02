@@ -43,6 +43,7 @@ const phonebookSchema = new mongoose.Schema({
 	number: {
 		type: String,
 		validate: validateNumber,
+		minlength: 8,
 	},
 });
 
