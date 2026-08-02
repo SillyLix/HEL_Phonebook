@@ -23,6 +23,13 @@ const App = () => {
 		});
 	}, []);
 
+	const setNote = (message, iserror = false, time = 3000) => {
+		setNoteMessage({ message: message, isError: iserror });
+		setTimeout(() => {
+			setNoteMessage({ message: null, isError: false });
+		}, time);
+	};
+
 	// delete phone number
 	const onDeleteButtonClicked = (id) => {
 		console.log('delete pressed:', id);
@@ -40,16 +47,10 @@ const App = () => {
 						)
 						// show error msg
 						.catch(() => {
-							setNoteMessage({
-								message: `Information of ${person.name} has already been removed from server`,
-								isError: true,
-							});
-							setTimeout(() => {
-								setNoteMessage({
-									message: null,
-									isError: false,
-								});
-							}, 3000);
+							setNote(
+								`Information of ${person.name} has already been removed from server`,
+								true,
+							);
 						});
 				}
 			}
@@ -69,7 +70,7 @@ const App = () => {
 				persons={persons}
 				setPersons={setPersons}
 				setFilteredPersons={setFilteredPerson}
-				setNoteMessage={setNoteMessage}
+				setNoteMessage={setNote}
 			/>
 			<h2>Numbers</h2>
 

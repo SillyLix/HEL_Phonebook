@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import phonebookBackend from '../services/phonebookBackend';
 
-const PersonForm = ({
-	persons,
-	setPersons,
-	setFilteredPersons,
-	setNoteMessage,
-}) => {
+const PersonForm = ({ persons, setPersons, setNoteMessage }) => {
 	const [newName, setNewName] = useState('');
 	const [newNumber, setNewNumber] = useState('');
-	const messageTimeout = 3000;
 
 	const onAddButtonClicked = (event) => {
 		console.log(event);
@@ -33,19 +27,17 @@ const PersonForm = ({
 				number: newNumber,
 			};
 
-			phonebookBackend.create(data).then((response) => {
-				setNoteMessage({
-					message: `Added ${response.name} with phone number ${response.number}`,
-					isError: false,
+			phonebookBackend
+				.create(data)
+				.then((response) => {
+					setNoteMessage(
+						`Added ${response.name} with phone number ${response.number}`,
+					);
+					return setPersons(persons.concat(response));
+				})
+				.catch((error) => {
+					setNoteMessage(error.response.data.error, true, 5000);
 				});
-				setTimeout(() => {
-					setNoteMessage({
-						message: null,
-						isError: false,
-					});
-				}, messageTimeout);
-				return setPersons(persons.concat(response));
-			});
 		} else {
 			console.log(filteredPersons);
 
@@ -63,16 +55,10 @@ const PersonForm = ({
 					console.log(element);
 
 					return phonebookBackend.update(element.id, data).then((response) => {
-						setNoteMessage({
-							message: `Changed number to ${response.number} for ${response.name}`,
-							isError: false,
-						});
-						setTimeout(() => {
-							setNoteMessage({
-								message: null,
-								isError: false,
-							});
-						}, messageTimeout);
+						setNoteMessage(
+							`Changed number to ${response.number} for ${response.name}`,
+						);
+
 						return setPersons(
 							persons.map((person) =>
 								person.id === element.id ? response : person,
