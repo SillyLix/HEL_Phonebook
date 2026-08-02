@@ -2,12 +2,11 @@ import js from '@eslint/js'
 import globals from 'globals'
 import { defineConfig } from 'eslint/config'
 import stylisticJs from '@stylistic/eslint-plugin'
-import prettierConfig from 'eslint-config-prettier'
 
 export default defineConfig([
 	js.configs.recommended,
 	{
-		files: ['**/*.{js,mjs,cjs}'],
+		files: ['**/*.{js,cjs}'],
 		plugins: {
 			js,
 			'@stylistic/js': stylisticJs,
